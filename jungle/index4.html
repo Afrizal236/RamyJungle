@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak - Pelindung Satwa Langka</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+            min-height: 100vh;
+            color: #333;
+            /* Optimasi untuk smooth scroll */
+            overflow-x: hidden;
+        }
+
+        /* Optimasi untuk smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: #0d2818;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #e8f4f1;
+            line-height: 1.5;
+            max-width: 800px;
+            margin: 0 auto 1rem auto;
+            text-align: justify;
+        }
+
+        /* PERBAIKAN: Gallery container yang lebih smooth */
+        .gallery-container {
+            overflow: hidden;
+            margin: 2rem 0;
+            /* Tambahkan ini untuk menghilangkan scroll horizontal */
+            width: 100%;
+            position: relative;
+        }
+
+        .photo-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            /* PERBAIKAN: Gunakan transform3d untuk hardware acceleration */
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        .photo-row.right {
+            animation-name: slideRight;
+            animation-duration: 45s;
+        }
+
+        .photo-row.left {
+            animation-name: slideLeft;
+            animation-duration: 50s;
+        }
+
+        .photo-item {
+            flex-shrink: 0;
+            width: 250px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            /* PERBAIKAN: Optimasi untuk performa */
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+        }
+
+        .photo-item:hover {
+            transform: translate3d(0, -5px, 0) scale(1.02);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            /* PERBAIKAN: Mencegah kedipan */
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .photo-item:hover img {
+            transform: translate3d(0, 0, 0) scale(1.05);
+        }
+
+        /* PERBAIKAN: Animasi keyframe yang lebih smooth */
+        @keyframes slideRight {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                transform: translate3d(-100%, 0, 0);
+            }
+        }
+
+        @keyframes slideLeft {
+            0% {
+                transform: translate3d(-100%, 0, 0);
+            }
+            100% {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        /* Bagian Siapa Kita dengan optimasi performa */
+        .about-section {
+            position: relative;
+            margin: 4rem 0;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-description {
+            background: #0d2818;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .about-description p {
+            font-size: 1.2rem;
+            color: #ffffff;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://github.com/Afrizal236/bendera/blob/main/apa-arti-merah-putih-pada-bendera-indonesia-simak-informasinya-1_169.jpeg?raw=true');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 20px;
+            /* PERBAIKAN: Efek zoom yang smooth dengan scroll */
+            transform: translate3d(0, 0, 0) scale(0.8);
+            transition: transform 0.1s ease-out;
+            opacity: 0.9;
+            will-change: transform;
+        }
+
+        .about-background.animate {
+            /* Class ini akan ditambahkan ketika masuk viewport */
+            opacity: 1;
+        }
+
+        .about-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-content h1 {
+            font-size: 3rem;
+            color: #ff0000;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            color: #ffffff;
+            line-height: 1.8;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            font-weight: 600;
+        }
+
+        .about-description {
+            padding: 1.5rem;
+        }
+
+        .about-description p {
+            font-size: 1rem;
+        }
+
+        /* Container full width untuk contact section */
+        .contact-wrapper {
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            width: 100vw;
+            background: #0d2818;
+            margin-top: 3rem;
+            padding: 3rem 0 0 0;
+        }
+
+        .contact-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+        .contact-section h2 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .contact-item {
+            flex: 1;
+            min-width: 250px;
+            max-width: 280px;
+            padding: 1.5rem 1rem;
+            background: #1b3b36;
+            border-radius: 10px;
+            border-left: 4px solid #4dd0e1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* PERBAIKAN: Optimasi hover */
+            will-change: transform;
+        }
+
+        .contact-item:hover {
+            transform: translate3d(0, -5px, 0);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-item h3 {
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .contact-item p {
+            color: #e8f4f1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-break: break-word;
+            hyphens: auto;
+        }
+
+        .contact-item:last-child p {
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: #0d2818;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 0;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            width: 100vw;
+            border-top: 3px solid #2a6b62;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-divider {
+            width: 80px;
+            height: 2px;
+            background: #4dd0e1;
+            margin: 0 auto 1rem auto;
+            border-radius: 1px;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            color: #a0c4c7;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .footer .copyright {
+            font-size: 1rem;
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        .footer .heart {
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            margin: 0 0.3rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* PERBAIKAN: Media queries yang lebih optimal */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .photo-item {
+                width: 200px;
+                height: 160px;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+
+            .photo-row.right {
+                animation-duration: 35s;
+            }
+            
+            .photo-row.left {
+                animation-duration: 38s;
+            }
+
+            .about-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .about-content p {
+                font-size: 1rem;
+            }
+
+            .about-content {
+                padding: 2rem;
+            }
+
+            .about-section {
+                min-height: 400px;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contact-item {
+                min-width: 100%;
+                max-width: 100%;
+                flex: none;
+            }
+
+            .contact-section {
+                padding: 0 1rem 2rem 1rem;
+            }
+
+            .contact-wrapper {
+                padding: 2rem 0 0 0;
+            }
+
+            .footer {
+                padding: 1.5rem 0;
+            }
+
+            .footer-content {
+                padding: 0 1rem;
+            }
+
+            .footer p {
+                font-size: 0.8rem;
+            }
+
+            .footer .copyright {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-item {
+                padding: 1rem 0.5rem;
+            }
+            
+            .contact-item h3 {
+                font-size: 1rem;
+            }
+            
+            .contact-item p {
+                font-size: 0.85rem;
+            }
+
+            .footer p {
+                font-size: 0.75rem;
+            }
+
+            .footer .copyright {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* PERBAIKAN: Preload untuk mencegah kedipan */
+        .photo-item img {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        .hamburger {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hamburger:hover {
+            transform: scale(1.05);
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: #2d5a3d;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Side Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            padding: 100px 0 50px 0;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar.open {
+            left: 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d5a3d;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 2rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0 2rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #2d5a3d;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(45, 90, 61, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-menu a.active {
+            background: linear-gradient(45deg, #4a9d6f, #6bb585);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 157, 111, 0.3);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Button -->
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Side Navigation -->
+    <!-- Di index3.html, update navbar section -->
+    <nav class="navbar" id="navbar">
+        <div class="logo">Ramy</div>
+        <ul class="nav-menu">
+            <li><a href="index.html">🏠 Beranda</a></li>
+            <li><a href="index2.php">🐾 Fauna</a></li> <!-- Link ke index2.php -->
+            <li><a href="index3.html">🌳 Habitat</a></li>
+            <li><a href="conservation.php">🛡️ Konservasi</a></li>
+            <li><a href="index4.html" class="active">📞 Kontak</a></li> <!-- Active class dan link ke diri sendiri -->
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1>Mari Lestarikan Satwa Langka</h1>
+            <p>Indonesia adalah rumah bagi beragam satwa yang tidak dapat ditemukan di tempat lain di dunia. Satwa langka seperti Harimau Sumatera, Badak Jawa, Orangutan, dan Burung Cenderawasih bukan hanya simbol kekayaan alam kita, tetapi juga bagian penting dari keseimbangan ekosistem. Sayangnya, banyak dari mereka kini berada di ambang kepunahan akibat perburuan liar, hilangnya habitat alami, dan kerusakan lingkungan.</p>
+            <p>Melestarikan satwa langka bukan hanya soal menyelamatkan binatang, tetapi juga menjaga warisan alam yang tak ternilai bagi generasi mendatang. Anak cucu kita berhak menyaksikan keindahan dan keberagaman hayati yang masih bisa kita lihat hari ini. Jika kita tidak bertindak sekarang, mereka hanya akan mengenal satwa-satwa itu dari buku sejarah dan gambar.</p>
+            <p>Dengan menjaga kelestarian satwa langka, kita ikut menjaga kualitas udara, air, dan tanah yang sehat. Banyak satwa memiliki peran penting dalam rantai makanan dan dalam menyebarkan benih tumbuhan hutan, yang pada akhirnya memengaruhi kehidupan manusia juga.</p>
+            <p>Maka dari itu, mari kita jaga dan lindungi mereka bersama — melalui edukasi, penghentian perburuan ilegal, serta pelestarian habitat aslinya. Tindakan kecil kita hari ini akan membawa dampak besar untuk masa depan bumi dan untuk anak cucu kita kelak.</p>
+        </div>
+
+        <div class="gallery-container">
+            <!-- Baris 1: Bergeser ke Kanan -->
+            <div class="photo-row right" id="row1">
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/borneo-orangutan-closeup-face-animal-closeup%20(1).jpg?raw=true" alt="Orangutan Kalimantan">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/closeup-face-sumatran-tiger%20(1).jpg?raw=true" alt="Harimau Sumatera">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/closeup-rhino-zoo%20(1).jpg?raw=true" alt="Badak">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/closeup-shot-cute-orangutan-holding-food-playing-with-rope-forest%20(1).jpg?raw=true" alt="Orangutan Lucu">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/magnificent-rhinoceros-grazing-grass-covered-fields-forest%20(1)%20(1).jpg?raw=true" alt="Badak di Padang Rumput">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/orangutan-playing-swing-holding-rope%20(1).jpg?raw=true" alt="Orangutan Bermain">
+                </div>
+            </div>
+
+            <!-- Baris 2: Bergeser ke Kiri -->
+            <div class="photo-row left" id="row2">
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka/blob/main/portrait-young-bengal-tiger%20(1).jpg?raw=true" alt="Harimau Bengal Muda">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/1672048786-jenis-burung-cendrawasih-3.jpg?raw=true" alt="Burung Cendrawasih">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/1672048993-jenis-burung-cendrawasih-7.jpg?raw=true" alt="Cendrawasih Eksotis">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/Burung-cendrawasih.jpg?raw=true" alt="Burung Cendrawasih Cantik">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/Mengenal-Burung-Cendrawasih.jpg?raw=true" alt="Mengenal Cendrawasih">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/baby-rhino-laying-near-its-mother-near-plants-sunny-day%20(1).jpg?raw=true" alt="Bayi Badak">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/beatiful-bird-paradise-branch-cendrawasih-bird%20(1).jpg?raw=true" alt="Burung Surga">
+                </div>
+            </div>
+
+            <!-- Baris 3: Bergeser ke Kanan -->
+            <div class="photo-row right" id="row3">
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka2/blob/main/closeup-shot-indian-rhino-with-blurred-background.jpg?raw=true" alt="Badak India">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka3/blob/main/amazing-bengal-tiger-nature%20(1).jpg?raw=true" alt="Harimau Bengal Menakjubkan">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka3/blob/main/baby-orangutan-closeup-baby-orangutans-look-camera.jpg?raw=true" alt="Bayi Orangutan">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka3/blob/main/endangered-bornean-orangutan-rocky-habitat-pongo-pygmaeus-wild-animal-bars-beautiful-cute-creature.jpg?raw=true" alt="Orangutan Kalimantan Terancam">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka4/blob/main/amazing-bengal-tiger-nature.jpg?raw=true" alt="Harimau di Alam">
+                </div>
+                <div class="photo-item">
+                    <img src="https://github.com/Afrizal236/kewanlangka4/blob/main/portrait-young-bengal-tiger-closeup-tiger.jpg?raw=true" alt="Potret Harimau Muda">
+                </div>
+            </div>
+        </div>
+
+        <!-- Bagian Siapa Kita -->
+        <div class="about-section" id="aboutSection">
+            <div class="about-background" id="aboutBackground"></div>
+            <div class="about-content">
+                <h1>Siapa Kita?</h1>
+            </div>
+        </div>
+        
+        <div class="about-description">
+            <p>Kita adalah pelindung satwa langka yang terancam punah. Dedikasi kami adalah menjaga kelestarian fauna Indonesia yang eksotis dan langka untuk generasi mendatang.</p>
+        </div>
+    </div>
+
+    <!-- Contact section -->
+    <div class="contact-wrapper">
+        <div class="contact-section">
+            <h2>Hubungi Kami</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>📧 Email</h3>
+                    <p>ramydiaman@gmail.com</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📱 Telepon</h3>
+                    <p>+62 878 5219 1197</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📍 Alamat</h3>
+                    <p>Jl. banyu urip<br>Surabaya, Indonesia</p>
+                </div>
+                <div class="contact-item">
+                    <h3>🌐 Website</h3>
+                    <p>www.pelindungsatwailangka.org</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-divider"></div>
+            <p>Dibuat dengan <span class="heart">❤️</span> untuk pelestarian satwa langka Indonesia</p>
+            <p class="copyright">© 2025 RamyFurry. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // PERBAIKAN: Optimasi JavaScript untuk performa yang lebih baik
+        
+        // Fungsi untuk membuat duplikasi seamless tanpa gap
+        function createSeamlessGallery() {
+            const rows = document.querySelectorAll('.photo-row');
+            
+            rows.forEach(row => {
+                const photos = row.querySelectorAll('.photo-item');
+                
+                // Buat duplikasi untuk seamless loop
+                photos.forEach(photo => {
+                    const clone = photo.cloneNode(true);
+                    row.appendChild(clone);
+                });
+                
+                // Duplikasi sekali lagi untuk memastikan tidak ada gap
+                photos.forEach(photo => {
+                    const clone = photo.cloneNode(true);
+                    row.appendChild(clone);
+                });
+            });
+        }
+
+        // Fungsi untuk preload gambar dan mencegah kedipan
+        function preloadImages() {
+            const images = document.querySelectorAll('.photo-item img');
+            
+            images.forEach(img => {
+                const imageUrl = img.src;
+                const preloadImg = new Image();
+                preloadImg.src = imageUrl;
+                
+                // Set loading attribute untuk lazy loading
+                img.loading = 'lazy';
+                
+                // Tambahkan event listener untuk mencegah kedipan
+                img.addEventListener('load', function() {
+                    this.style.opacity = '1';
+                });
+                
+                img.addEventListener('error', function() {
+                    this.style.opacity = '0.5';
+                });
+            });
+        }
+
+        // PERBAIKAN: Intersection Observer yang lebih efisien + efek zoom
+        function initScrollAnimations() {
+            const aboutSection = document.getElementById('aboutSection');
+            const aboutBackground = document.getElementById('aboutBackground');
+            
+            if (!aboutSection || !aboutBackground) return;
+            
+            // Intersection Observer untuk trigger awal animasi
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        aboutBackground.classList.add('animate');
+                        // Jangan disconnect observer agar efek zoom tetap berjalan
+                    }
+                });
+            }, {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            observer.observe(aboutSection);
+        }
+
+        // PERBAIKAN: Efek zoom gambar "Siapa Kita" yang smooth
+        let scrollTimeout;
+        function handleScrollOptimized() {
+            // Debounce scroll events
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const aboutSection = document.getElementById('aboutSection');
+                const aboutBackground = document.getElementById('aboutBackground');
+                
+                if (aboutSection && aboutBackground) {
+                    const rect = aboutSection.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    const isVisible = rect.top < windowHeight && rect.bottom > 0;
+                    
+                    if (isVisible) {
+                        requestAnimationFrame(() => {
+                            // Hitung progress scroll (0 = belum masuk viewport, 1 = sudah lewat viewport)
+                            const scrollProgress = Math.max(0, Math.min(1, 
+                                (windowHeight - rect.top) / (windowHeight + rect.height)
+                            ));
+                            
+                            // Scale dari 0.8 ke 1.0 berdasarkan scroll progress
+                            const scale = 0.8 + (scrollProgress * 0.2);
+                            const finalScale = Math.min(scale, 1.0);
+                            
+                            // Terapkan transform dengan smooth transition
+                            aboutBackground.style.transform = `translate3d(0, 0, 0) scale(${finalScale})`;
+                        });
+                    }
+                }
+            }, 10);
+        }
+
+        // PERBAIKAN: Optimasi hover effects
+        function initHoverEffects() {
+            const photoRows = document.querySelectorAll('.photo-row');
+            
+            photoRows.forEach(row => {
+                let isPaused = false;
+                
+                row.addEventListener('mouseenter', function() {
+                    if (!isPaused) {
+                        this.style.animationPlayState = 'paused';
+                        isPaused = true;
+                    }
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    if (isPaused) {
+                        this.style.animationPlayState = 'running';
+                        isPaused = false;
+                    }
+                });
+            });
+        }
+
+        // PERBAIKAN: Responsive handler yang lebih efisien
+        function handleResponsiveChanges() {
+            const rows = document.querySelectorAll('.photo-row');
+            const isMobile = window.innerWidth <= 768;
+            
+            rows.forEach(row => {
+                if (row.classList.contains('right')) {
+                    row.style.animationDuration = isMobile ? '35s' : '45s';
+                } else {
+                    row.style.animationDuration = isMobile ? '38s' : '50s';
+                }
+            });
+        }
+
+        // PERBAIKAN: Inisialisasi yang lebih optimal
+        document.addEventListener('DOMContentLoaded', function() {
+            // Jalankan fungsi secara bertahap untuk performa yang lebih baik
+            createSeamlessGallery();
+            
+            setTimeout(() => {
+                preloadImages();
+                initScrollAnimations();
+                handleResponsiveChanges();
+            }, 100);
+            
+            setTimeout(() => {
+                initHoverEffects();
+            }, 200);
+        });
+
+        // PERBAIKAN: Event listeners yang lebih efisien
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleResponsiveChanges, 250);
+        });
+
+        // PERBAIKAN: Passive scroll listener untuk performa yang lebih baik
+        window.addEventListener('scroll', handleScrollOptimized, { passive: true });
+
+        // PERBAIKAN: Optimasi untuk mobile
+        if ('ontouchstart' in window) {
+            document.body.style.webkitOverflowScrolling = 'touch';
+        }
+
+        const hamburger = document.getElementById('hamburger');
+        const navbar = document.getElementById('navbar');
+        const overlay = document.getElementById('overlay');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navbar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navbar.classList.remove('open');
+            overlay.classList.remove('show');
+        });
+
+        // Close menu when clicking nav links
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navbar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

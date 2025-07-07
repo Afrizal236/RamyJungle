@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitat Hewan Langka di Indonesia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffd700, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            color: #a8d8a8;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .wildlife-icons {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .map-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 1s ease-out;
+        }
+
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .habitat-info {
+            margin-bottom: 20px;
+        }
+
+        .habitat-info h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .habitat-info h3::before {
+            content: "🌿";
+            margin-right: 10px;
+        }
+
+        .habitat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffd700;
+            transition: all 0.3s ease;
+        }
+
+        .habitat-item:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .habitat-item h4 {
+            color: #ff6b35;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .habitat-item p {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #ffd700, #ff6b35);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            color: #2c5530;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+            transform: translateY(-2px);
+        }
+
+        .custom-popup {
+            background: rgba(44, 85, 48, 0.95) !important;
+            color: white !important;
+            border-radius: 10px !important;
+            border: none !important;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: rgba(44, 85, 48, 0.95) !important;
+            color: white !important;
+            border-radius: 10px !important;
+        }
+
+        .custom-popup .leaflet-popup-tip {
+            background: rgba(44, 85, 48, 0.95) !important;
+        }
+
+        .popup-content h4 {
+            color: #ffd700;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .popup-content p {
+            line-height: 1.4;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .species-tag {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.3);
+            color: #ffd700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hamburger:hover {
+            transform: scale(1.05);
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: #2d5a3d;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Side Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            padding: 100px 0 50px 0;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar.open {
+            left: 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d5a3d;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 2rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0 2rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #2d5a3d;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(45, 90, 61, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-menu a.active {
+            background: linear-gradient(45deg, #4a9d6f, #6bb585);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 157, 111, 0.3);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Footer Styles - Copied from index2.html */
+        .footer {
+            background: #0d2818;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 0;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            width: 100vw;
+            border-top: 3px solid #2a6b62;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-divider {
+            width: 80px;
+            height: 2px;
+            background: #4dd0e1;
+            margin: 0 auto 1rem auto;
+            border-radius: 1px;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            color: #a0c4c7;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .footer .copyright {
+            font-size: 1rem;
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        .footer .heart {
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            margin: 0 0.3rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .map-controls {
+                justify-content: center;
+            }
+            
+            .wildlife-icons {
+                font-size: 2rem;
+                flex-wrap: wrap;
+            }
+
+            .footer {
+                padding: 1.5rem 0;
+            }
+
+            .footer-content {
+                padding: 0 1rem;
+            }
+
+            .footer p {
+                font-size: 0.8rem;
+            }
+
+            .footer .copyright {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer p {
+                font-size: 0.75rem;
+            }
+
+            .footer .copyright {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Button -->
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Side Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="logo">Ramy</div>
+        <ul class="nav-menu">
+            <li><a href="index.html">🏠 Beranda</a></li>
+            <li><a href="index2.php">🐾 Fauna</a></li>
+            <li><a href="index3.html" class="active">🌳 Habitat</a></li>
+            <li><a href="conservation.php">🛡️ Konservasi</a></li>
+            <li><a href="index4.html">📞 Kontak</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <div class="wildlife-icons">
+                <span>🐅</span>
+                <span>🦏</span>
+                <span>🐘</span>
+                <span>🦧</span>
+                <span>🐢</span>
+                <span>🦅</span>
+                <span>🐃</span>
+                <span>🦜</span>
+            </div>
+            <h1>Habitat Hewan Langka di Indonesia</h1>
+            <h2>Mengenal Habitat Hewan Langka Lebih Dalam</h2>
+            <p>Jelajahi keanekaragaman habitat hewan langka Indonesia yang tersebar di berbagai kawasan konservasi dari Sabang hingga Merauke</p>
+        </div>
+
+        <div class="main-content">
+            <div class="info-panel">
+                <div class="habitat-info">
+                    <h3>Keanekaragaman Indonesia</h3>
+                    <div class="habitat-item">
+                        <h4>Megadiversitas</h4>
+                        <p>Indonesia adalah salah satu dari 17 negara megadiversitas dengan kekayaan flora dan fauna endemik yang luar biasa.</p>
+                    </div>
+                    <div class="habitat-item">
+                        <h4>Ancaman Kepunahan</h4>
+                        <p>Banyak spesies menghadapi ancaman serius akibat deforestasi, perburuan liar, dan perubahan iklim.</p>
+                    </div>
+                    <div class="habitat-item">
+                        <h4>Upaya Konservasi</h4>
+                        <p>Program konservasi terintegrasi melibatkan pemerintah, NGO, dan masyarakat untuk melindungi habitat alami.</p>
+                    </div>
+                    <div class="habitat-item">
+                        <h4>Ekosistem Unik</h4>
+                        <p>Dari hutan hujan tropis hingga savana, setiap ekosistem memiliki spesies endemik yang perlu dilestarikan.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">300+</span>
+                        <span class="stat-label">Spesies Terancam</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">54</span>
+                        <span class="stat-label">Taman Nasional</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">17,508</span>
+                        <span class="stat-label">Pulau Indonesia</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">25,000</span>
+                        <span class="stat-label">Spesies Tumbuhan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <h3 style="margin-bottom: 15px; color: #ffd700;">🗺️ Peta Sebaran Habitat</h3>
+                <div class="map-controls">
+                    <button class="control-btn active" onclick="showAllHabitats()">Semua Habitat</button>
+                    <button class="control-btn" onclick="showMammals()">Mamalia</button>
+                    <button class="control-btn" onclick="showReptiles()">Reptil</button>
+                    <button class="control-btn" onclick="showBirds()">Burung</button>
+                </div>
+
+                <div id="map"></div>
+                
+                <!-- Map Legend -->
+                <div style="margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h4 style="color: #ffd700; margin-bottom: 10px; font-size: 1rem;">🔍 Legenda Peta</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; font-size: 0.9rem;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">🐅</span>
+                            <span>Mamalia</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">🐲</span>
+                            <span>Reptil</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">🦅</span>
+                            <span>Burung</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">🐟</span>
+                            <span>Ikan</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">🐸</span>
+                            <span>Amfibi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-divider"></div>
+            <p>Dibuat dengan <span class="heart">❤️</span> untuk pelestarian satwa langka Indonesia</p>
+            <p class="copyright">© 2025 RamyFurry. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script>
+        let map;
+        let markers = [];
+        let markersLayer;
+        let wildlifeHabitats = []; // Data akan diambil dari database
+
+        // Tambahkan fungsi untuk mendapatkan icon berdasarkan tipe hewan
+        function getIconByType(type) {
+            const iconMap = {
+                'mamalia': '🐅',
+                'reptil': '🐲',
+                'burung': '🦅',
+                'ikan': '🐟',
+                'amfibi': '🐸'
+            };
+            
+            return iconMap[type.toLowerCase()] || '🐾'; // Default icon jika tipe tidak ditemukan
+        }
+
+        // Perbarui fungsi getCustomIcon untuk menggunakan tipe hewan
+        function getCustomIcon(habitat) {
+            const icon = getIconByType(habitat.type); // Menggunakan habitat.type alih-alih habitat.icon
+            
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background: linear-gradient(45deg, #ffd700, #ff6b35); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 3px 15px rgba(255,215,0,0.4); border: 2px solid rgba(255,255,255,0.3);">${icon}</div>`,
+                iconSize: [35, 35],
+                iconAnchor: [17, 17]
+            });
+        }
+
+        // Fungsi untuk mengambil data dari database
+        async function fetchHabitats() {
+            try {
+                const response = await fetch('api.php?action=get_all');
+                const data = await response.json();
+                wildlifeHabitats = data;
+                initializeMap();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Fallback: gunakan data statis jika API gagal
+                wildlifeHabitats = [
+                    // Data statis sebagai backup...
+                ];
+                initializeMap();
+            }
+        }
+
+        function initializeMap() {
+            markersLayer.clearLayers();
+            markers = [];
+
+            wildlifeHabitats.forEach((habitat, index) => {
+                const marker = L.marker([habitat.lat, habitat.lng], {
+                    icon: getCustomIcon(habitat)
+                });
+
+                const popupContent = `
+                    <div class="popup-content">
+                        <h4>${habitat.name}</h4>
+                        <p><strong>Spesies Utama:</strong> ${habitat.species}</p>
+                        <p><strong>Populasi:</strong> ${habitat.population}</p>
+                        <p><strong>Luas Area:</strong> ${habitat.area}</p>
+                        <p>${habitat.description}</p>
+                        <div class="species-tag">${habitat.type.charAt(0).toUpperCase() + habitat.type.slice(1)}</div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent, {
+                    className: 'custom-popup',
+                    maxWidth: 300
+                });
+
+                markers.push({
+                    marker: marker,
+                    data: habitat
+                });
+
+                markersLayer.addLayer(marker);
+            });
+
+            showAllHabitats();
+        }
+
+        function initMap() {
+            map = L.map('map').setView([-2.5, 118.0], 5);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            markersLayer = L.layerGroup().addTo(map);
+
+            // Ambil data dari database
+            fetchHabitats();
+        }
+
+        function showAllHabitats() {
+            document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.control-btn[onclick="showAllHabitats()"]').classList.add('active');
+
+            markersLayer.clearLayers();
+            markers.forEach(item => {
+                markersLayer.addLayer(item.marker);
+            });
+
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers.map(item => item.marker));
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        function showMammals() {
+            document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.control-btn[onclick="showMammals()"]').classList.add('active');
+
+            const mammals = markers.filter(item => item.data.type === 'mamalia');
+            
+            markersLayer.clearLayers();
+            mammals.forEach(item => {
+                markersLayer.addLayer(item.marker);
+            });
+            
+            if (mammals.length > 0) {
+                const group = new L.featureGroup(mammals.map(item => item.marker));
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        function showReptiles() {
+            document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.control-btn[onclick="showReptiles()"]').classList.add('active');
+
+            const reptiles = markers.filter(item => item.data.type === 'reptil');
+            
+            markersLayer.clearLayers();
+            reptiles.forEach(item => {
+                markersLayer.addLayer(item.marker);
+            });
+            
+            if (reptiles.length > 0) {
+                const group = new L.featureGroup(reptiles.map(item => item.marker));
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        function showBirds() {
+            document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.control-btn[onclick="showBirds()"]').classList.add('active');
+
+            const birds = markers.filter(item => item.data.type === 'burung');
+            
+            markersLayer.clearLayers();
+            birds.forEach(item => {
+                markersLayer.addLayer(item.marker);
+            });
+            
+            if (birds.length > 0) {
+                const group = new L.featureGroup(birds.map(item => item.marker));
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+        });
+
+        // Hamburger Menu Functionality
+        const hamburger = document.getElementById('hamburger');
+        const navbar = document.getElementById('navbar');
+        const overlay = document.getElementById('overlay');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navbar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navbar.classList.remove('open');
+            overlay.classList.remove('show');
+        });
+
+        // Close menu when clicking nav links
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navbar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
